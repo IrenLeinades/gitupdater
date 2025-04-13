@@ -1,0 +1,24 @@
+{
+  "name": "@irenleinades/gitupdater",
+  "version": "1.0.0",
+  "description": "A tool to update multiple Git repositories at once",
+  "main": "index.js",
+  "bin": {
+    "gitupdater": "./bin/gitupdater"
+  },
+  "scripts": {
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "keywords": [
+    "git",
+    "update",
+    "repositories",
+    "batch",
+    "automation"
+  ],
+  "author": "José Ñeri",
+  "license": "MIT",
+  "dependencies": {
+    "inquirer": "^8.2.4"
+  }
+} 
