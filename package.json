@@ -1,6 +1,6 @@
 {
   "name": "@irenleinades/gitupdater",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A tool to update multiple Git repositories at once",
   "main": "index.js",
   "bin": {
@@ -21,4 +21,4 @@
   "dependencies": {
     "inquirer": "^8.2.4"
   }
-} 
+}
