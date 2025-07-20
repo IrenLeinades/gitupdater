@@ -53,23 +53,47 @@ async function main() {
             const repoPath = path.dirname(gitDir);
             console.log(`\nUpdating repository: ${repoPath}`);
 
-            try {
-                // Configure git to use credentials
-                execSync('git config --local credential.helper store', { cwd: repoPath });
-                fs.copyFileSync(credentialsFile, path.join(os.homedir(), '.git-credentials'));
-
-                // Pull changes
-                execSync('git pull', { cwd: repoPath });
-                console.log('✅ Successfully updated');
-            } catch (error) {
-                console.log('❌ Failed to update');
-                console.error(error.message);
-            } finally {
-                // Clean up credentials
+            let pullAttempted = false;
+            let updated = false;
+            let lastError = null;
+            while (!updated && !pullAttempted) {
                 try {
-                    fs.unlinkSync(path.join(os.homedir(), '.git-credentials'));
-                } catch (e) {
-                    // Ignore cleanup errors
+                    // Configure git to use credentials
+                    execSync('git config --local credential.helper store', { cwd: repoPath });
+                    fs.copyFileSync(credentialsFile, path.join(os.homedir(), '.git-credentials'));
+
+                    // Pull changes
+                    execSync('git pull', { cwd: repoPath });
+                    console.log('✅ Successfully updated');
+                    updated = true;
+                } catch (error) {
+                    const errorMsg = error.message || '';
+                    // Detect local changes error
+                    if (!pullAttempted && /would be overwritten|local changes|Your local changes to the following files would be overwritten|Please commit your changes or stash them before you merge|cannot pull with rebase: You have unstaged changes/i.test(errorMsg)) {
+                        console.log('⚠️  Local changes detected. Stashing changes...');
+                        try {
+                            execSync('git add .', { cwd: repoPath });
+                            execSync('git stash', { cwd: repoPath });
+                            pullAttempted = true; // Only retry once
+                            continue; // Retry pull
+                        } catch (stashError) {
+                            console.log('❌ Failed to stash local changes');
+                            console.error(stashError.message);
+                            break;
+                        }
+                    } else {
+                        console.log('❌ Failed to update');
+                        console.error(errorMsg);
+                        lastError = error;
+                        break;
+                    }
+                } finally {
+                    // Clean up credentials
+                    try {
+                        fs.unlinkSync(path.join(os.homedir(), '.git-credentials'));
+                    } catch (e) {
+                        // Ignore cleanup errors
+                    }
                 }
             }
         }
