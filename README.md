@@ -9,6 +9,7 @@ A command-line tool to update multiple Git repositories at once. GitUpdater find
 - 🌐 Works on Windows, Linux, and macOS
 - 🔄 Updates all repositories with a single command
 - 🛡️ Cleans up credentials after use
+- 📦 Optional automatic stashing of local changes with `--stashlocal`
 
 ## Installation
 
@@ -44,8 +45,15 @@ cd /path/to/your/projects
 ```
 
 2. Run the updater:
+
+### Basic Usage
 ```bash
 gitupdater
+```
+
+### With Automatic Stashing
+```bash
+gitupdater --stashlocal
 ```
 
 3. Enter your Git credentials when prompted:
@@ -57,6 +65,10 @@ The tool will:
 - Update each repository using your credentials
 - Show success/failure status for each repository
 - Clean up credentials after use
+
+### Command Line Options
+
+- `--stashlocal`: Automatically stash local changes before pulling updates. This prevents conflicts with local modifications and ensures a clean update process.
 
 ## Windows Notes
 
